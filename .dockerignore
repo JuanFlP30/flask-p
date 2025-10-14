@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+.git
+.gitignore
+*.log
+docker-compose.yml
+node_modules/
+package.json
+package-lock.json
+vite.config.js
+static/css/input.css

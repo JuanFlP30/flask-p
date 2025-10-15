@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   flask-app:
     build: .
@@ -8,4 +10,47 @@ services:
       - .:/app
     environment:
       - FLASK_ENV=development
-    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - mariadb
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - MONGO_INITDB_DATABASE=flask_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+  mariadb:
+    image: mariadb:11.2
+    container_name: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=flask_db
+      - MYSQL_USER=flask_user
+      - MYSQL_PASSWORD=flask123
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:
+  mariadb_data:
+
+networks:
+  app-network:
+    driver: bridge
